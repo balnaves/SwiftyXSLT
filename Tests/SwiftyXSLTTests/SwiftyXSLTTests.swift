@@ -37,12 +37,23 @@ final class SwiftyXSLTTests: XCTestCase {
     let resultString = "\n    Article - My Article\n    Authors: \n    - Mr. Foo\n    - Mr. Bar"
     
     func testTransform() {
-        let result = SwiftyXSLT().transform(xml: xmlString, with: stylesheetString)
+        let result = try? SwiftyXSLT.shared().transformXML(xmlString, withStyleSheet: stylesheetString)
         XCTAssertNotNil(result)
         XCTAssertEqual(result, resultString)
     }
+    
+    func testMalformedStylesheet() {
+        do {
+            let _ = try SwiftyXSLT().transformXML(xmlString, withStyleSheet: "<?bleh>")
+        }
+        catch {
+            XCTAssertNotNil(error)
+            return
+        }
+        XCTFail("Malformed stylesheet did not throw error")
+    }
 
     static var allTests = [
-        ("testTransform", testTransform),
+        ("testTransform", testTransform), ("testMalformedStylesheet", testMalformedStylesheet)
     ]
 }

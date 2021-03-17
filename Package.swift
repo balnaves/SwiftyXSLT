@@ -20,11 +20,9 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(name: "libxslt",
                 dependencies: []),
-        .target(name: "Wrapper",
-                dependencies: ["libxslt"]),
         .target(
             name: "SwiftyXSLT",
-            dependencies: ["Wrapper"]),
+            dependencies: ["libxslt"]),
         .testTarget(
             name: "SwiftyXSLTTests",
             dependencies: ["SwiftyXSLT"]),
