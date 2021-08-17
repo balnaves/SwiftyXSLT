@@ -29,7 +29,7 @@
 #include <libxml/xpathInternals.h>
 #include <libxml/xpath.h>
 #include "xslt.h"
-#include "xsltInternals.h"
+#include "xsltinternals.h"
 #include "pattern.h"
 #include "variables.h"
 #include "namespaces.h"

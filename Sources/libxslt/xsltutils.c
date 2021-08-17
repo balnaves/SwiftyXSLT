@@ -38,7 +38,7 @@
 #include <libxml/xmlIO.h>
 #include "xsltutils.h"
 #include "templates.h"
-#include "xsltInternals.h"
+#include "xsltinternals.h"
 #include "imports.h"
 #include "transform.h"
 

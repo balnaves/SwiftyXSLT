@@ -24,7 +24,7 @@
 #include <libxml/xpathInternals.h>
 #include "xslt.h"
 #include "xsltutils.h"
-#include "xsltInternals.h"
+#include "xsltinternals.h"
 #include "templates.h"
 
 #ifdef WITH_XSLT_DEBUG

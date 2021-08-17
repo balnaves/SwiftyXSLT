@@ -30,11 +30,11 @@
 #include <libxml/xmlerror.h>
 #include "xslt.h"
 #include "xsltutils.h"
-#include "xsltInternals.h"
+#include "xsltinternals.h"
 #include "transform.h"
 #include "templates.h"
 #include "variables.h"
-#include "numbersInternals.h"
+#include "numbersinternals.h"
 #include "preproc.h"
 #include "extra.h"
 #include "imports.h"

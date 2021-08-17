@@ -27,7 +27,7 @@
 #include "pattern.h"
 #include "templates.h"
 #include "transform.h"
-#include "numbersInternals.h"
+#include "numbersinternals.h"
 
 #ifndef FALSE
 # define FALSE (0 == 1)

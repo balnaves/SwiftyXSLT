@@ -40,7 +40,7 @@
 #include <libxml/uri.h>
 #include <libxml/parserInternals.h>
 #include "xslt.h"
-#include "xsltInternals.h"
+#include "xsltinternals.h"
 #include "xsltutils.h"
 #include "attributes.h"
 #include "namespaces.h"

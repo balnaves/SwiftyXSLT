@@ -20,7 +20,7 @@
 #include <libxml/dict.h>
 #include <libxml/xmlerror.h>
 #include "xsltexports.h"
-#include "xsltInternals.h"
+#include "xsltinternals.h"
 
 #ifdef __cplusplus
 extern "C" {

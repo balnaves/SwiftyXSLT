@@ -13,7 +13,7 @@
 #include <libxml/xpath.h>
 #include <libxml/xpathInternals.h>
 #include "xsltexports.h"
-#include "xsltInternals.h"
+#include "xsltinternals.h"
 #include "functions.h"
 
 #ifdef __cplusplus

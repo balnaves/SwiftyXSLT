@@ -39,7 +39,7 @@
 #include <libxml/xmlerror.h>
 #include <libxml/uri.h>
 #include "xslt.h"
-#include "xsltInternals.h"
+#include "xsltinternals.h"
 #include "xsltutils.h"
 #include "preproc.h"
 #include "imports.h"

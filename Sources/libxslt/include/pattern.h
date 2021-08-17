@@ -12,7 +12,7 @@
 #ifndef __XML_XSLT_PATTERN_H__
 #define __XML_XSLT_PATTERN_H__
 
-#include "xsltInternals.h"
+#include "xsltinternals.h"
 #include "xsltexports.h"
 
 #ifdef __cplusplus

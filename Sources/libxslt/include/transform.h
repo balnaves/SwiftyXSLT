@@ -15,7 +15,7 @@
 #include <libxml/parser.h>
 #include <libxml/xmlIO.h>
 #include "xsltexports.h"
-#include "xsltInternals.h"
+#include "xsltinternals.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -22,7 +22,7 @@
 #include "xslt.h"
 #include "xsltexports.h"
 #include "xsltlocale.h"
-#include "numbersInternals.h"
+#include "numbersinternals.h"
 
 #ifdef __cplusplus
 extern "C" {

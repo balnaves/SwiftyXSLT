@@ -7,7 +7,8 @@
 
 #import <Foundation/Foundation.h>
 #import "SwiftyXSLT.h"
-#import "xsltInternals.h"
+
+@import libxslt;
 
 NSErrorDomain const SwiftyXSLTErrorDomain = @"SwiftyXSLTErrorDomain";
 

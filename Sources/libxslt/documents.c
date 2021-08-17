@@ -17,7 +17,7 @@
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
 #include "xslt.h"
-#include "xsltInternals.h"
+#include "xsltinternals.h"
 #include "xsltutils.h"
 #include "documents.h"
 #include "transform.h"

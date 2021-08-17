@@ -34,11 +34,11 @@
 #include <libxml/uri.h>
 #include <libxml/xpointer.h>
 #include "xslt.h"
-#include "xsltInternals.h"
+#include "xsltinternals.h"
 #include "xsltutils.h"
 #include "functions.h"
 #include "extensions.h"
-#include "numbersInternals.h"
+#include "numbersinternals.h"
 #include "keys.h"
 #include "documents.h"
 

@@ -56,7 +56,7 @@
 #include <libxml/tree.h>
 #include <libxml/uri.h>
 #include "xslt.h"
-#include "xsltInternals.h"
+#include "xsltinternals.h"
 #include "xsltutils.h"
 #include "extensions.h"
 #include "security.h"

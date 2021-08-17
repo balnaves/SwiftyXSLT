@@ -38,12 +38,12 @@
 #include <libxml/debugXML.h>
 #include <libxml/uri.h>
 #include "xslt.h"
-#include "xsltInternals.h"
+#include "xsltinternals.h"
 #include "xsltutils.h"
 #include "pattern.h"
 #include "transform.h"
 #include "variables.h"
-#include "numbersInternals.h"
+#include "numbersinternals.h"
 #include "namespaces.h"
 #include "attributes.h"
 #include "templates.h"
