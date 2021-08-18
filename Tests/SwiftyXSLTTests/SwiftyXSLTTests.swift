@@ -33,6 +33,24 @@ final class SwiftyXSLTTests: XCTestCase {
 
     </xsl:stylesheet>
     """
+
+    let stylesheetStringV2 = """
+    <?xml version="1.0"?>
+    <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+      <xsl:output method="text"/>
+
+      <xsl:template match="/">
+        Article - <xsl:value-of select="/Article/Title"/>
+        Authors: <xsl:apply-templates select="/Article/Authors/Author"/>
+      </xsl:template>
+
+      <xsl:template match="Author">
+        - <xsl:value-of select="." />
+      </xsl:template>
+
+    </xsl:stylesheet>
+    """
     
     let resultString = "\n    Article - My Article\n    Authors: \n    - Mr. Foo\n    - Mr. Bar"
     
@@ -51,6 +69,17 @@ final class SwiftyXSLTTests: XCTestCase {
             return
         }
         XCTFail("Malformed stylesheet did not throw error")
+    }
+
+    func testIncomptibleVersionStylesheet() {
+        do {
+            let _ = try SwiftyXSLT().transformXML(xmlString, withStyleSheet: stylesheetStringV2)
+        }
+        catch {
+            XCTAssertNotNil(error)
+            return
+        }
+        XCTFail("XSL versin >1.1 did not throw an error")
     }
 
     static var allTests = [

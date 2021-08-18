@@ -36,10 +36,17 @@ NSErrorDomain const SwiftyXSLTErrorDomain = @"SwiftyXSLTErrorDomain";
     }
     
     xsltStylesheetPtr stylesheet = xsltParseStylesheetDoc(stylePtr);
-    
+
     if (stylesheet == nil) {
         NSMutableDictionary *errorDetail = [NSMutableDictionary dictionary];
         [errorDetail setValue:@"Unable to parse stylesheet" forKey:NSLocalizedDescriptionKey];
+        *error = [NSError errorWithDomain:SwiftyXSLTErrorDomain code:cannotParseStylesheet userInfo:errorDetail];
+        return nil;
+    }
+
+    if (stylesheet->forwards_compatible) {
+        NSMutableDictionary *errorDetail = [NSMutableDictionary dictionary];
+        [errorDetail setValue:@"Incompatible XSL version. Only 1.1 features are supported." forKey:NSLocalizedDescriptionKey];
         *error = [NSError errorWithDomain:SwiftyXSLTErrorDomain code:cannotParseStylesheet userInfo:errorDetail];
         return nil;
     }
