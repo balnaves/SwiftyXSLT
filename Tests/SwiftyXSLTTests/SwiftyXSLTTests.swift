@@ -3,7 +3,7 @@ import XCTest
 
 final class SwiftyXSLTTests: XCTestCase {
     
-    let xmlString = """
+    let xmlData = """
     <?xml version="1.0"?>
     <?xml-stylesheet type="text/xsl" href="example.xsl"?>
     <Article>
@@ -14,9 +14,9 @@ final class SwiftyXSLTTests: XCTestCase {
       </Authors>
       <Body>This is my article text.</Body>
     </Article>
-    """
+    """.data(using: .utf8)!
     
-    let stylesheetString = """
+    let stylesheetData = """
     <?xml version="1.0"?>
     <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
@@ -32,9 +32,9 @@ final class SwiftyXSLTTests: XCTestCase {
       </xsl:template>
 
     </xsl:stylesheet>
-    """
+    """.data(using: .utf8)!
 
-    let stylesheetStringV2 = """
+    let stylesheetDataV2 = """
     <?xml version="1.0"?>
     <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
@@ -50,19 +50,19 @@ final class SwiftyXSLTTests: XCTestCase {
       </xsl:template>
 
     </xsl:stylesheet>
-    """
+    """.data(using: .utf8)!
     
     let resultString = "\n    Article - My Article\n    Authors: \n    - Mr. Foo\n    - Mr. Bar"
     
     func testTransform() {
-        let result = try? SwiftyXSLT.shared().transformXML(xmlString, withStyleSheet: stylesheetString)
+        let result = try? SwiftyXSLT.shared().transformXML(xmlData, withStyleSheet: stylesheetData)
         XCTAssertNotNil(result)
         XCTAssertEqual(result, resultString)
     }
     
     func testMalformedStylesheet() {
         do {
-            let _ = try SwiftyXSLT().transformXML(xmlString, withStyleSheet: "<?bleh>")
+            let _ = try SwiftyXSLT().transformXML(xmlData, withStyleSheet: Data())
         }
         catch {
             XCTAssertNotNil(error)
@@ -73,7 +73,7 @@ final class SwiftyXSLTTests: XCTestCase {
 
     func testIncomptibleVersionStylesheet() {
         do {
-            let _ = try SwiftyXSLT().transformXML(xmlString, withStyleSheet: stylesheetStringV2)
+            let _ = try SwiftyXSLT().transformXML(xmlData, withStyleSheet: stylesheetDataV2)
         }
         catch {
             XCTAssertNotNil(error)
@@ -83,6 +83,8 @@ final class SwiftyXSLTTests: XCTestCase {
     }
 
     static var allTests = [
-        ("testTransform", testTransform), ("testMalformedStylesheet", testMalformedStylesheet)
+        ("testTransform", testTransform),
+        ("testMalformedStylesheet", testMalformedStylesheet),
+        ("testIncomptibleVersionStylesheet", testIncomptibleVersionStylesheet),
     ]
 }

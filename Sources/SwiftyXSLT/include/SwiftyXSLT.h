@@ -23,7 +23,7 @@ typedef NS_ERROR_ENUM(SwiftyXSLTErrorDomain, SwiftyXSLTError) {
 @interface SwiftyXSLT : NSObject
 
 + (SwiftyXSLT *)shared;
-- (NSString * _Nullable)transformXML:(NSString *)xmlString withStyleSheet:(NSString *)styleString error:(NSError **)error;
+- (NSString * _Nullable)transformXML:(NSData *)xmlData withStyleSheet:(NSData *)styleData error:(NSError **)error;
 
 @end
 

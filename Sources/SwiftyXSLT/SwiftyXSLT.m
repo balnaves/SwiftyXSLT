@@ -23,10 +23,9 @@ NSErrorDomain const SwiftyXSLTErrorDomain = @"SwiftyXSLTErrorDomain";
     return sharedSwiftyXSLT;
 }
 
-- (NSString *)transformXML:(NSString *)xmlString withStyleSheet:(NSString *)styleString error:(NSError **)error {
-    
-    xmlDocPtr xmlPtr = xmlReadMemory(xmlString.UTF8String, (int)xmlString.length, NULL, NULL, 0);
-    xmlDocPtr stylePtr = xmlReadMemory(styleString.UTF8String, (int)styleString.length, NULL, NULL, 0);
+- (NSString *)transformXML:(NSData *)xmlData withStyleSheet:(NSData *)styleData error:(NSError *__autoreleasing  _Nullable *)error {
+    xmlDocPtr xmlPtr = xmlReadMemory(xmlData.bytes, (int)xmlData.length, NULL, NULL, 0);
+    xmlDocPtr stylePtr = xmlReadMemory(styleData.bytes, (int)styleData.length, NULL, NULL, 0);
     
     if (xmlPtr == NULL || stylePtr == NULL) {
         NSMutableDictionary *errorDetail = [NSMutableDictionary dictionary];
