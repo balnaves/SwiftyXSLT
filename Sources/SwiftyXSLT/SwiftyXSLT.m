@@ -23,7 +23,7 @@ NSErrorDomain const SwiftyXSLTErrorDomain = @"SwiftyXSLTErrorDomain";
     return sharedSwiftyXSLT;
 }
 
-- (NSString *)transformXML:(NSData *)xmlData withStyleSheet:(NSData *)styleData error:(NSError *__autoreleasing  _Nullable *)error {
+- (NSData *)transformXML:(NSData *)xmlData withStyleSheet:(NSData *)styleData error:(NSError *__autoreleasing  _Nullable *)error {
     xmlDocPtr xmlPtr = xmlReadMemory(xmlData.bytes, (int)xmlData.length, NULL, NULL, 0);
     xmlDocPtr stylePtr = xmlReadMemory(styleData.bytes, (int)styleData.length, NULL, NULL, 0);
     
@@ -31,15 +31,29 @@ NSErrorDomain const SwiftyXSLTErrorDomain = @"SwiftyXSLTErrorDomain";
         NSMutableDictionary *errorDetail = [NSMutableDictionary dictionary];
         [errorDetail setValue:@"Unable to read input" forKey:NSLocalizedDescriptionKey];
         *error = [NSError errorWithDomain:SwiftyXSLTErrorDomain code:missingInputString userInfo:errorDetail];
+
+        if (xmlPtr != NULL) {
+            xmlFreeDoc(xmlPtr);
+        }
+        if (stylePtr != NULL) {
+            xmlFreeDoc(stylePtr);
+        }
+
         return nil;
     }
     
     xsltStylesheetPtr stylesheet = xsltParseStylesheetDoc(stylePtr);
 
-    if (stylesheet == nil) {
+    if (stylesheet == NULL) {
         NSMutableDictionary *errorDetail = [NSMutableDictionary dictionary];
         [errorDetail setValue:@"Unable to parse stylesheet" forKey:NSLocalizedDescriptionKey];
         *error = [NSError errorWithDomain:SwiftyXSLTErrorDomain code:cannotParseStylesheet userInfo:errorDetail];
+
+        xmlFreeDoc(xmlPtr);
+        xmlFreeDoc(stylePtr);
+        xsltCleanupGlobals();
+        xmlCleanupParser();
+
         return nil;
     }
 
@@ -47,45 +61,52 @@ NSErrorDomain const SwiftyXSLTErrorDomain = @"SwiftyXSLTErrorDomain";
         NSMutableDictionary *errorDetail = [NSMutableDictionary dictionary];
         [errorDetail setValue:@"Incompatible XSL version. Only 1.1 features are supported." forKey:NSLocalizedDescriptionKey];
         *error = [NSError errorWithDomain:SwiftyXSLTErrorDomain code:cannotParseStylesheet userInfo:errorDetail];
+
+        xmlFreeDoc(xmlPtr);
+        xsltFreeStylesheet(stylesheet);
+        xsltCleanupGlobals();
+        xmlCleanupParser();
+
         return nil;
     }
     
     xmlDocPtr result = xsltApplyStylesheet(stylesheet, xmlPtr, NULL);
     
-    if (result == nil) {
+    if (result == NULL) {
         NSMutableDictionary *errorDetail = [NSMutableDictionary dictionary];
         [errorDetail setValue:@"Unable to apply stylesheet" forKey:NSLocalizedDescriptionKey];
         *error = [NSError errorWithDomain:SwiftyXSLTErrorDomain code:cannotApplyStylesheet userInfo:errorDetail];
+
+        xmlFreeDoc(xmlPtr);
         xsltFreeStylesheet(stylesheet);
         xsltCleanupGlobals();
         xmlCleanupParser();
+
         return nil;
     }
     
-    xmlChar* xmlResultBuffer = nil;
+    xmlChar *xmlResultBuffer = NULL;
     int length = 0;
     xsltSaveResultToString(&xmlResultBuffer, &length, result, stylesheet);
     
-    NSString* resultString = nil;
+    NSData *resultData = nil;
     
-    if (xmlResultBuffer != nil) {
-        resultString = [NSString stringWithCString: (char *)xmlResultBuffer encoding: NSUTF8StringEncoding];
-        free(xmlResultBuffer);
+    if (xmlResultBuffer != NULL) {
+        resultData = [NSData dataWithBytesNoCopy:xmlResultBuffer length:length freeWhenDone:YES];
     }
     else {
         NSMutableDictionary *errorDetail = [NSMutableDictionary dictionary];
         [errorDetail setValue:@"Unable to convert result to string" forKey:NSLocalizedDescriptionKey];
         *error = [NSError errorWithDomain:SwiftyXSLTErrorDomain code:cannotConvertResultToString userInfo:errorDetail];
-        xsltFreeStylesheet(stylesheet);
-        xsltCleanupGlobals();
-        xmlCleanupParser();
-        return nil;
     }
-    
+
+    xmlFreeDoc(xmlPtr);
     xsltFreeStylesheet(stylesheet);
+    xmlFreeDoc(result);
     xsltCleanupGlobals();
     xmlCleanupParser();
-    return resultString;
+
+    return resultData;
 }
 
 @end

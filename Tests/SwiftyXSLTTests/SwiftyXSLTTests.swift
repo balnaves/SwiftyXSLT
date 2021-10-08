@@ -57,7 +57,7 @@ final class SwiftyXSLTTests: XCTestCase {
     func testTransform() {
         let result = try? SwiftyXSLT.shared().transformXML(xmlData, withStyleSheet: stylesheetData)
         XCTAssertNotNil(result)
-        XCTAssertEqual(result, resultString)
+        XCTAssertEqual(result.flatMap { String(data: $0, encoding: .utf8) }, resultString)
     }
     
     func testMalformedStylesheet() {
