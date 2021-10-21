@@ -51,8 +51,6 @@ NSErrorDomain const SwiftyXSLTErrorDomain = @"SwiftyXSLTErrorDomain";
 
         xmlFreeDoc(xmlPtr);
         xmlFreeDoc(stylePtr);
-        xsltCleanupGlobals();
-        xmlCleanupParser();
 
         return nil;
     }
@@ -64,8 +62,6 @@ NSErrorDomain const SwiftyXSLTErrorDomain = @"SwiftyXSLTErrorDomain";
 
         xmlFreeDoc(xmlPtr);
         xsltFreeStylesheet(stylesheet);
-        xsltCleanupGlobals();
-        xmlCleanupParser();
 
         return nil;
     }
@@ -79,8 +75,6 @@ NSErrorDomain const SwiftyXSLTErrorDomain = @"SwiftyXSLTErrorDomain";
 
         xmlFreeDoc(xmlPtr);
         xsltFreeStylesheet(stylesheet);
-        xsltCleanupGlobals();
-        xmlCleanupParser();
 
         return nil;
     }
@@ -103,8 +97,6 @@ NSErrorDomain const SwiftyXSLTErrorDomain = @"SwiftyXSLTErrorDomain";
     xmlFreeDoc(xmlPtr);
     xsltFreeStylesheet(stylesheet);
     xmlFreeDoc(result);
-    xsltCleanupGlobals();
-    xmlCleanupParser();
 
     return resultData;
 }
