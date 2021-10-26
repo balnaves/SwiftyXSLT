@@ -22,12 +22,24 @@ typedef NS_ERROR_ENUM(SwiftyXSLTErrorDomain, SwiftyXSLTError) {
     cannotConvertResultToString
 };
 
+@class XSLTResult;
+
 @interface SwiftyXSLT : NSObject
 
 + (SwiftyXSLT *)shared;
-- (NSData * _Nullable)transformXMLData:(NSData *)xmlData withStyleSheetData:(NSData *)styleData error:(NSError **)error;
-- (NSData * _Nullable)transformXML:(xmlDocPtr)xmlPtr withStyleSheetData:(NSData *)styleData error:(NSError **)error;
-- (NSData * _Nullable)transformXML:(xmlDocPtr)xmlPtr withStyleSheet:(xsltStylesheetPtr)stylesheet error:(NSError **)error;
+- (XSLTResult * _Nullable)transformXMLData:(NSData *)xmlData withStyleSheetData:(NSData *)styleData error:(NSError **)error;
+- (XSLTResult * _Nullable)transformXML:(xmlDocPtr)xmlPtr withStyleSheetData:(NSData *)styleData error:(NSError **)error;
+
+@end
+
+@interface XSLTResult : NSObject
+
+@property (nonatomic, readonly) xmlDocPtr doc;
+@property (nonatomic, readonly) xsltStylesheetPtr stylesheet;
+
+@property (nonatomic, readonly) BOOL freeWhenDone; // default YES;
+
+- (NSData *)data;
 
 @end
 

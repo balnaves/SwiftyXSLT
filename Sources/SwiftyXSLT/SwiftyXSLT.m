@@ -12,6 +12,12 @@
 
 NSErrorDomain const SwiftyXSLTErrorDomain = @"SwiftyXSLTErrorDomain";
 
+@interface XSLTResult ()
+
+- (instancetype)initWithDoc:(xmlDocPtr)doc stylesheet:(xsltStylesheetPtr)stylesheet;
+
+@end
+
 @implementation SwiftyXSLT
 
 + (SwiftyXSLT *)shared {
@@ -23,7 +29,7 @@ NSErrorDomain const SwiftyXSLTErrorDomain = @"SwiftyXSLTErrorDomain";
     return sharedSwiftyXSLT;
 }
 
-- (NSData *)transformXMLData:(NSData *)xmlData withStyleSheetData:(NSData *)styleData error:(NSError *__autoreleasing  _Nullable *)error {
+- (XSLTResult *)transformXMLData:(NSData *)xmlData withStyleSheetData:(NSData *)styleData error:(NSError *__autoreleasing  _Nullable *)error {
     xmlDocPtr xmlPtr = xmlReadMemory(xmlData.bytes, (int)xmlData.length, NULL, NULL, 0);
     xmlDocPtr stylePtr = xmlReadMemory(styleData.bytes, (int)styleData.length, NULL, NULL, 0);
     
@@ -34,14 +40,14 @@ NSErrorDomain const SwiftyXSLTErrorDomain = @"SwiftyXSLTErrorDomain";
         return nil;
     }
 
-    NSData *result = [self transformXML:xmlPtr withStyleSheetData:styleData error:error];
+    XSLTResult *result = [self transformXML:xmlPtr withStyleSheetData:styleData error:error];
 
     xmlFreeDoc(xmlPtr);
 
     return result;
 }
 
-- (NSData *)transformXML:(xmlDocPtr)xmlPtr withStyleSheetData:(NSData *)styleData error:(NSError *__autoreleasing  _Nullable *)error {
+- (XSLTResult *)transformXML:(xmlDocPtr)xmlPtr withStyleSheetData:(NSData *)styleData error:(NSError *__autoreleasing  _Nullable *)error {
     xmlDocPtr stylePtr = xmlReadMemory(styleData.bytes, (int)styleData.length, NULL, NULL, 0);
 
     if (stylePtr == NULL) {
@@ -63,14 +69,10 @@ NSErrorDomain const SwiftyXSLTErrorDomain = @"SwiftyXSLTErrorDomain";
         return nil;
     }
 
-    NSData *result = [self transformXML:xmlPtr withStyleSheet:stylesheet error:error];
-
-    xsltFreeStylesheet(stylesheet);
-
-    return result;
+    return [self transformXML:xmlPtr withStyleSheet:stylesheet error:error];
 }
 
-- (NSData *)transformXML:(xmlDocPtr)xmlPtr withStyleSheet:(xsltStylesheetPtr)stylesheet error:(NSError *__autoreleasing  _Nullable *)error {
+- (XSLTResult *)transformXML:(xmlDocPtr)xmlPtr withStyleSheet:(xsltStylesheetPtr)stylesheet error:(NSError *__autoreleasing  _Nullable *)error {
     if (stylesheet->forwards_compatible) {
         NSMutableDictionary *errorDetail = [NSMutableDictionary dictionary];
         [errorDetail setValue:@"Incompatible XSL version. Only 1.1 features are supported." forKey:NSLocalizedDescriptionKey];
@@ -86,25 +88,46 @@ NSErrorDomain const SwiftyXSLTErrorDomain = @"SwiftyXSLTErrorDomain";
         *error = [NSError errorWithDomain:SwiftyXSLTErrorDomain code:cannotApplyStylesheet userInfo:errorDetail];
         return nil;
     }
-    
+
+    return [[XSLTResult alloc] initWithDoc:result stylesheet:stylesheet];
+}
+
+@end
+
+@implementation XSLTResult
+
+- (instancetype)init {
+    if ((self = [super init])) {
+        _freeWhenDone = YES;
+    }
+    return self;
+}
+
+- (instancetype)initWithDoc:(xmlDocPtr)doc stylesheet:(xsltStylesheetPtr)stylesheet {
+    if ((self = [self init])) {
+        _doc = doc;
+        _stylesheet = stylesheet;
+    }
+    return self;
+}
+
+- (NSData *)data {
     xmlChar *xmlResultBuffer = NULL;
     int length = 0;
-    xsltSaveResultToString(&xmlResultBuffer, &length, result, stylesheet);
-    
-    NSData *resultData = nil;
-    
-    if (xmlResultBuffer != NULL) {
-        resultData = [NSData dataWithBytesNoCopy:xmlResultBuffer length:length freeWhenDone:YES];
-    }
-    else {
-        NSMutableDictionary *errorDetail = [NSMutableDictionary dictionary];
-        [errorDetail setValue:@"Unable to convert result to string" forKey:NSLocalizedDescriptionKey];
-        *error = [NSError errorWithDomain:SwiftyXSLTErrorDomain code:cannotConvertResultToString userInfo:errorDetail];
+    xsltSaveResultToString(&xmlResultBuffer, &length, self.doc, self.stylesheet);
+
+    if (xmlResultBuffer == NULL) {
+        return nil;
     }
 
-    xmlFreeDoc(result);
+    return [NSData dataWithBytesNoCopy:xmlResultBuffer length:length freeWhenDone:YES];
+}
 
-    return resultData;
+- (void)dealloc {
+    if (self.freeWhenDone) {
+        xmlFreeDoc(self.doc);
+        xsltFreeStylesheet(self.stylesheet);
+    }
 }
 
 @end
