@@ -23,25 +23,34 @@ NSErrorDomain const SwiftyXSLTErrorDomain = @"SwiftyXSLTErrorDomain";
     return sharedSwiftyXSLT;
 }
 
-- (NSData *)transformXML:(NSData *)xmlData withStyleSheet:(NSData *)styleData error:(NSError *__autoreleasing  _Nullable *)error {
+- (NSData *)transformXMLData:(NSData *)xmlData withStyleSheetData:(NSData *)styleData error:(NSError *__autoreleasing  _Nullable *)error {
     xmlDocPtr xmlPtr = xmlReadMemory(xmlData.bytes, (int)xmlData.length, NULL, NULL, 0);
     xmlDocPtr stylePtr = xmlReadMemory(styleData.bytes, (int)styleData.length, NULL, NULL, 0);
     
-    if (xmlPtr == NULL || stylePtr == NULL) {
+    if (xmlPtr == NULL) {
         NSMutableDictionary *errorDetail = [NSMutableDictionary dictionary];
         [errorDetail setValue:@"Unable to read input" forKey:NSLocalizedDescriptionKey];
         *error = [NSError errorWithDomain:SwiftyXSLTErrorDomain code:missingInputString userInfo:errorDetail];
-
-        if (xmlPtr != NULL) {
-            xmlFreeDoc(xmlPtr);
-        }
-        if (stylePtr != NULL) {
-            xmlFreeDoc(stylePtr);
-        }
-
         return nil;
     }
-    
+
+    NSData *result = [self transformXML:xmlPtr withStyleSheetData:styleData error:error];
+
+    xmlFreeDoc(xmlPtr);
+
+    return result;
+}
+
+- (NSData *)transformXML:(xmlDocPtr)xmlPtr withStyleSheetData:(NSData *)styleData error:(NSError *__autoreleasing  _Nullable *)error {
+    xmlDocPtr stylePtr = xmlReadMemory(styleData.bytes, (int)styleData.length, NULL, NULL, 0);
+
+    if (stylePtr == NULL) {
+        NSMutableDictionary *errorDetail = [NSMutableDictionary dictionary];
+        [errorDetail setValue:@"Unable to read input" forKey:NSLocalizedDescriptionKey];
+        *error = [NSError errorWithDomain:SwiftyXSLTErrorDomain code:missingInputString userInfo:errorDetail];
+        return nil;
+    }
+
     xsltStylesheetPtr stylesheet = xsltParseStylesheetDoc(stylePtr);
 
     if (stylesheet == NULL) {
@@ -49,20 +58,23 @@ NSErrorDomain const SwiftyXSLTErrorDomain = @"SwiftyXSLTErrorDomain";
         [errorDetail setValue:@"Unable to parse stylesheet" forKey:NSLocalizedDescriptionKey];
         *error = [NSError errorWithDomain:SwiftyXSLTErrorDomain code:cannotParseStylesheet userInfo:errorDetail];
 
-        xmlFreeDoc(xmlPtr);
         xmlFreeDoc(stylePtr);
 
         return nil;
     }
 
+    NSData *result = [self transformXML:xmlPtr withStyleSheet:stylesheet error:error];
+
+    xsltFreeStylesheet(stylesheet);
+
+    return result;
+}
+
+- (NSData *)transformXML:(xmlDocPtr)xmlPtr withStyleSheet:(xsltStylesheetPtr)stylesheet error:(NSError *__autoreleasing  _Nullable *)error {
     if (stylesheet->forwards_compatible) {
         NSMutableDictionary *errorDetail = [NSMutableDictionary dictionary];
         [errorDetail setValue:@"Incompatible XSL version. Only 1.1 features are supported." forKey:NSLocalizedDescriptionKey];
         *error = [NSError errorWithDomain:SwiftyXSLTErrorDomain code:cannotParseStylesheet userInfo:errorDetail];
-
-        xmlFreeDoc(xmlPtr);
-        xsltFreeStylesheet(stylesheet);
-
         return nil;
     }
     
@@ -72,10 +84,6 @@ NSErrorDomain const SwiftyXSLTErrorDomain = @"SwiftyXSLTErrorDomain";
         NSMutableDictionary *errorDetail = [NSMutableDictionary dictionary];
         [errorDetail setValue:@"Unable to apply stylesheet" forKey:NSLocalizedDescriptionKey];
         *error = [NSError errorWithDomain:SwiftyXSLTErrorDomain code:cannotApplyStylesheet userInfo:errorDetail];
-
-        xmlFreeDoc(xmlPtr);
-        xsltFreeStylesheet(stylesheet);
-
         return nil;
     }
     
@@ -94,8 +102,6 @@ NSErrorDomain const SwiftyXSLTErrorDomain = @"SwiftyXSLTErrorDomain";
         *error = [NSError errorWithDomain:SwiftyXSLTErrorDomain code:cannotConvertResultToString userInfo:errorDetail];
     }
 
-    xmlFreeDoc(xmlPtr);
-    xsltFreeStylesheet(stylesheet);
     xmlFreeDoc(result);
 
     return resultData;

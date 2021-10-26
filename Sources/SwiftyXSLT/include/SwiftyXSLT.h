@@ -4,7 +4,9 @@
 //
 //  Created by James Balnaves on 3/4/21.
 //
+
 #import <Foundation/Foundation.h>
+#import "xsltinternals.h"
 
 #ifndef SwiftyXSLT_h
 #define SwiftyXSLT_h
@@ -23,7 +25,9 @@ typedef NS_ERROR_ENUM(SwiftyXSLTErrorDomain, SwiftyXSLTError) {
 @interface SwiftyXSLT : NSObject
 
 + (SwiftyXSLT *)shared;
-- (NSData * _Nullable)transformXML:(NSData *)xmlData withStyleSheet:(NSData *)styleData error:(NSError **)error;
+- (NSData * _Nullable)transformXMLData:(NSData *)xmlData withStyleSheetData:(NSData *)styleData error:(NSError **)error;
+- (NSData * _Nullable)transformXML:(xmlDocPtr)xmlPtr withStyleSheetData:(NSData *)styleData error:(NSError **)error;
+- (NSData * _Nullable)transformXML:(xmlDocPtr)xmlPtr withStyleSheet:(xsltStylesheetPtr)stylesheet error:(NSError **)error;
 
 @end
 

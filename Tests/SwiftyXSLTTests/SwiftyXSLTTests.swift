@@ -55,14 +55,14 @@ final class SwiftyXSLTTests: XCTestCase {
     let resultString = "\n    Article - My Article\n    Authors: \n    - Mr. Foo\n    - Mr. Bar"
     
     func testTransform() {
-        let result = try? SwiftyXSLT.shared().transformXML(xmlData, withStyleSheet: stylesheetData)
+        let result = try? SwiftyXSLT.shared().transformXMLData(xmlData, withStyleSheetData: stylesheetData)
         XCTAssertNotNil(result)
         XCTAssertEqual(result.flatMap { String(data: $0, encoding: .utf8) }, resultString)
     }
     
     func testMalformedStylesheet() {
         do {
-            let _ = try SwiftyXSLT().transformXML(xmlData, withStyleSheet: Data())
+            let _ = try SwiftyXSLT().transformXMLData(xmlData, withStyleSheetData: Data())
         }
         catch {
             XCTAssertNotNil(error)
@@ -73,7 +73,7 @@ final class SwiftyXSLTTests: XCTestCase {
 
     func testIncomptibleVersionStylesheet() {
         do {
-            let _ = try SwiftyXSLT().transformXML(xmlData, withStyleSheet: stylesheetDataV2)
+            let _ = try SwiftyXSLT().transformXMLData(xmlData, withStyleSheetData: stylesheetDataV2)
         }
         catch {
             XCTAssertNotNil(error)
