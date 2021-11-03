@@ -31,7 +31,6 @@ NSErrorDomain const SwiftyXSLTErrorDomain = @"SwiftyXSLTErrorDomain";
 
 - (XSLTResult *)transformXMLData:(NSData *)xmlData withStyleSheetData:(NSData *)styleData error:(NSError *__autoreleasing  _Nullable *)error {
     xmlDocPtr xmlPtr = xmlReadMemory(xmlData.bytes, (int)xmlData.length, NULL, NULL, 0);
-    xmlDocPtr stylePtr = xmlReadMemory(styleData.bytes, (int)styleData.length, NULL, NULL, 0);
     
     if (xmlPtr == NULL) {
         NSMutableDictionary *errorDetail = [NSMutableDictionary dictionary];

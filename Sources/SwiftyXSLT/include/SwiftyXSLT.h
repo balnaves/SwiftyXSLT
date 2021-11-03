@@ -29,6 +29,7 @@ typedef NS_ERROR_ENUM(SwiftyXSLTErrorDomain, SwiftyXSLTError) {
 + (SwiftyXSLT *)shared;
 - (XSLTResult * _Nullable)transformXMLData:(NSData *)xmlData withStyleSheetData:(NSData *)styleData error:(NSError **)error;
 - (XSLTResult * _Nullable)transformXML:(xmlDocPtr)xmlPtr withStyleSheetData:(NSData *)styleData error:(NSError **)error;
+- (XSLTResult * _Nullable)transformXML:(xmlDocPtr)xmlPtr withStyleSheet:(xsltStylesheetPtr)stylesheet error:(NSError **)error;
 
 @end
 
@@ -37,7 +38,7 @@ typedef NS_ERROR_ENUM(SwiftyXSLTErrorDomain, SwiftyXSLTError) {
 @property (nonatomic, readonly) xmlDocPtr doc;
 @property (nonatomic, readonly) xsltStylesheetPtr stylesheet;
 
-@property (nonatomic, readonly) BOOL freeWhenDone; // default YES;
+@property (nonatomic) BOOL freeWhenDone; // default YES;
 
 - (NSData *)data;
 
